@@ -1,5 +1,7 @@
 package com.ptc.xla.config;
 
+import org.thymeleaf.resourceresolver.ClassLoaderResourceResolver;
+import org.thymeleaf.templateresolver.TemplateResolver;
 import spark.ModelAndView;
 import spark.Request;
 import spark.TemplateEngine;
@@ -13,15 +15,20 @@ import static spark.Spark.get;
 /**
  * Created by ssinghal
  * Created on 25-Jan-2016
- * If you refactor this code, remember: Code so clean you could eat off it!
  */
 public class WebConfig {
 
     private TemplateEngine engine;
 
     public WebConfig() {
-        engine = new XlaThymeleafTemplateEngine();
-
+        XlaMessageResolver messageResolver = new XlaMessageResolver();
+        TemplateResolver templateResolver = new TemplateResolver();
+        templateResolver.setTemplateMode("XHTML");
+        templateResolver.setPrefix("templates/");
+        templateResolver.setSuffix(".html");
+        templateResolver.setCacheTTLMs(Long.valueOf(3600000L));
+        templateResolver.setResourceResolver(new ClassLoaderResourceResolver());
+        engine = new XlaThymeleafTemplateEngine(messageResolver, templateResolver);
         setupRoutes();
     }
 
@@ -31,21 +38,12 @@ public class WebConfig {
             return "Hello World!";
         });
 
-//        get("")
-
-//        FreeMarkerEngine freeMarkerEngine = new FreeMarkerEngine();
-//        Configuration freeMarkerConfiguration = new Configuration();
-//        freeMarkerConfiguration.setTemplateLoader(new ClassTemplateLoader(BlogService.class, "/"));
-//        freeMarkerEngine.setConfiguration(freeMarkerConfiguration);
-
-
-
-        get("/login", (req, res) -> {
+        get("/eng", (req, res) -> {
             Map<String, Object> model = getModel(req);
             return new ModelAndView(model, "login");
         }, engine);
 
-        get("/summary", (req, res) -> {
+        get("/fra", (req, res) -> {
             Map<String, Object> model = getModel(req);
             return new ModelAndView(model, "summary");
         }, engine);
