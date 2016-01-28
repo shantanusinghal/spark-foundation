@@ -1,12 +1,23 @@
 package com.ptc.xla.services.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.ptc.xla.repository.UserRepository;
 import com.ptc.xla.services.LoginService;
 
 /**
- * Created by ssinghal
- * Created on 25-Jan-2016
- * If you refactor this code, remember: Code so clean you could eat off it!
+ * @author tbhasme
  */
+@Service
 public class LoginServiceImpl implements LoginService {
+
+  @Autowired
+  UserRepository userRepo;
+
+  @Override
+  public String getUserName() {
+    return userRepo.getUserName();
+  }
 
 }

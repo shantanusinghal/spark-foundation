@@ -1,14 +1,16 @@
 package com.ptc.xla.config;
 
-import spark.ModelAndView;
-import spark.Request;
-import spark.TemplateEngine;
+import static spark.Spark.get;
 
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import static spark.Spark.get;
+import spark.ModelAndView;
+import spark.Request;
+import spark.TemplateEngine;
+
+import com.ptc.xla.services.LoginService;
 
 /**
  * Created by ssinghal
@@ -18,10 +20,11 @@ import static spark.Spark.get;
 public class WebConfig {
 
     private TemplateEngine engine;
+    private LoginService loginService;
 
-    public WebConfig() {
+    public WebConfig(LoginService loginService) {
         engine = new XlaThymeleafTemplateEngine();
-
+        this.loginService = loginService;
         setupRoutes();
     }
 
@@ -42,7 +45,7 @@ public class WebConfig {
 
         get("/login", (req, res) -> {
             Map<String, Object> model = getModel(req);
-            return new ModelAndView(model, "login");
+            return new ModelAndView(model, loginService.getUserName());
         }, engine);
 
         get("/summary", (req, res) -> {
