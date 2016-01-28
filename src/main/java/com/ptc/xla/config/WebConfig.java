@@ -1,5 +1,7 @@
 package com.ptc.xla.config;
 
+import com.ptc.xla.models.User;
+import com.ptc.xla.services.UserService;
 import org.thymeleaf.resourceresolver.ClassLoaderResourceResolver;
 import org.thymeleaf.templateresolver.TemplateResolver;
 import spark.ModelAndView;
@@ -19,8 +21,10 @@ import static spark.Spark.get;
 public class WebConfig {
 
     private TemplateEngine engine;
+    private UserService userService;
 
-    public WebConfig() {
+    public WebConfig(UserService userService) {
+        this.userService = userService;
         XlaMessageResolver messageResolver = new XlaMessageResolver();
         TemplateResolver templateResolver = new TemplateResolver();
         templateResolver.setTemplateMode("XHTML");
@@ -29,13 +33,13 @@ public class WebConfig {
         templateResolver.setCacheTTLMs(Long.valueOf(3600000L));
         templateResolver.setResourceResolver(new ClassLoaderResourceResolver());
         engine = new XlaThymeleafTemplateEngine(messageResolver, templateResolver);
-        setupRoutes();
     }
 
-    private void setupRoutes() {
+    public void setupRoutes() {
 
         get("/hello", (req, res) -> {
-            return "Hello World!";
+            User user = userService.getUser("123");
+            return "Hello " + user.getUserName() + "!";
         });
 
         get("/eng", (req, res) -> {
@@ -45,7 +49,7 @@ public class WebConfig {
 
         get("/fra", (req, res) -> {
             Map<String, Object> model = getModel(req);
-            return new ModelAndView(model, "summary");
+            return new ModelAndView(model, "login");
         }, engine);
 
     }
